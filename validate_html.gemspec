@@ -5,7 +5,7 @@ require "validate_html/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "validate_html"
-  spec.version       = ValidateHtml::VERSION
+  spec.version       = ValidateHTML::VERSION
   spec.authors       = ["Dana Sherson"]
   spec.email         = ["robot@dana.sh"]
 

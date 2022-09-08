@@ -1,6 +1,6 @@
-RSpec.describe ValidateHtml do
+RSpec.describe ValidateHTML do
   it "has a version number" do
-    expect(ValidateHtml::VERSION).not_to be nil
+    expect(ValidateHTML::VERSION).not_to be nil
   end
 
   it "does something useful" do

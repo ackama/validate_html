@@ -1,6 +1,6 @@
 require "validate_html/version"
 
-module ValidateHtml
+module ValidateHTML
   class Error < StandardError; end
   # Your code goes here...
 end
