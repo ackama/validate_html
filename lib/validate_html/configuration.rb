@@ -4,18 +4,46 @@ require 'tmpdir'
 require 'pathname'
 
 module ValidateHTML
+  # Configuration attributes for ValidateHTML
+  #
+  # @see ValidateHTML.configure
   class Configuration
 
+    # Set to false to not raise {InvalidHTMLError} by default
+    #
+    # Defaults to true
+    #
+    # @return [Boolean]
+    # @see ValidateHTML.validate_html
+    # @see ValidateHTML.raise_remembered_messages
+    # @see #remember_messages
     attr_accessor :raise_on_invalid_html
-    alias raise_on_invalid_html? raise_on_invalid_html
-    undef raise_on_invalid_html
+    alias_method :raise_on_invalid_html?, :raise_on_invalid_html
 
+    # Set to true to allow using {ValidateHTML.raise_remembered_messages}
+    #
+    # Defaults to false
+    #
+    # @return [Boolean]
+    # @see ValidateHTML.raise_remembered_messages
     attr_accessor :remember_messages
-    alias remember_messages? remember_messages
-    undef remember_messages
+    alias_method :remember_messages?, :remember_messages
 
+    # Error messages to ignore
+    # @return [Array<String, Regexp>]
     attr_accessor :ignored_errors
+
+    # App-relative paths to skip automatic validation
+    # @return [Array<String, Regexp>]
     attr_accessor :ignored_paths
+
+    # The rails environments to initialize automatic validation
+    #
+    # Defaults to ["development", "test"]
+    #
+    # This won't take any effect if changed after the app is initialized
+    #
+    # @return [Array<String>]
     attr_accessor :environments
 
     def initialize
@@ -27,6 +55,15 @@ module ValidateHTML
       @snapshot_path = nil
     end
 
+    # The directory to use for snapshots with invalid HTML
+    #
+    # @default
+    #   if Rails is present, this will default to "tmp/invalid_html"
+    #   otherwise it will default to a new directory created with Dir.mktmpdir
+    #
+    # @!attribute snapshot_path [rw]
+    # @return [Pathname]
+    # @param [Pathname, String] path
     def snapshot_path
       @snapshot_path ||= defined?(::Rails) ? ::Rails.root.join('tmp/invalid_html') : ::Pathname.new(::Dir.mktmpdir)
     end

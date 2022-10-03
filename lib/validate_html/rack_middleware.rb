@@ -1,9 +1,16 @@
 module ValidateHTML
+  # Rack Middleware to validate the HTML of outgoing responses
+  #
+  # This can be used with any rack app
   class RackMiddleware
     def initialize(app)
       @app = app
     end
 
+    # @param env
+    # @return [Array<(status, headers, response)>]
+    # @raise {InvalidHTMLError} if the response has an HTML content type and the html is invalid and {Configuration#raise_on_invalid_html} is true and the request path isn't ignored by {Configuration#ignored_paths}
+    # @see ValidateHTML.validate_html
     def call(env)
       status, headers, response = @app.call(env)
       path = ::Rack::Request.new(env).fullpath

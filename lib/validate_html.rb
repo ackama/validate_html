@@ -2,51 +2,131 @@
 
 require_relative "validate_html/version"
 require_relative "validate_html/configuration"
+require_relative "validate_html/rack_middleware"
+require_relative "validate_html/mailer_observer"
+require_relative "validate_html/railtie" if defined?(::Rails::Railtie)
 require "nokogiri"
+require "digest"
 
 module ValidateHTML
   class Error < StandardError; end
+  # This error message will include the full html validation details,
+  # with a path to the snapshot to assist resolving the invalid html
+  #
+  # @example
+  #   ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Emphasised Fragment')
+  #   # raises: ValidateHTML::InvalidHTMLError with this message:
+  #   #
+  #   #   Invalid html from My Emphasised Fragment (ValidateHTML::InvalidHTMLError)
+  #   #   Parsed using Nokogiri::HTML5::DocumentFragment
+  #   #   document saved at: [Configuration#snapshot_path]/2567357e17ee0c948b6bfe13a95120d1da678775.html
+  #   #
+  #   #   1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
+  #   #   <strong><em>Very Emphasised</strong></em>
+  #   #                              ^
+  #   #   1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
+  #   #   <strong><em>Very Emphasised</strong></em>
+  #   #                                       ^
+  # @see ValidateHTML.validate_html
+  # @see ValidateHTML.raise_remembered_messages
   class InvalidHTMLError < Error; end
+
+  # This error will be raised when calling {ValidateHTML.raise_remembered_messages} while {Configuration#remember_messages} is false
+  # @see ValidateHTML.raise_remembered_messages
+  # @see Configuration#remember_messages
   class NotRememberingMessagesError < Error; end
 
   class << self
-    def configuration
-      @configuration ||= Configuration.new
-    end
+    # Validate the HTML using by parsing it with nokogiri
+    #
+    # skip any errors matching patterns in {Configuration#ignored_errors}
+    #
+    # if there are any errors remaining:
+    # remember the errors if {Configuration#remember_messages} is true,
+    # save the invalid html into the {Configuration#snapshot_path} directory,
+    # and raise {InvalidHTMLError} with the full messages if raise_on_invalid_html is true
+    # or return false
+    #
+    # if there are no errors, return true
+    #
+    # @example
+    #   ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Emphasised Fragment')
+    #   # raises: ValidateHTML::InvalidHTMLError with this message:
+    #   #
+    #   #   Invalid html from My Emphasised Fragment (ValidateHTML::InvalidHTMLError)
+    #   #   Parsed using Nokogiri::HTML5::DocumentFragment
+    #   #   Document saved at: [Configuration#snapshot_path]/2567357e17ee0c948b6bfe13a95120d1da678775.html
+    #   #
+    #   #   1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
+    #   #   <strong><em>Very Emphasised</strong></em>
+    #   #                              ^
+    #   #   1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
+    #   #   <strong><em>Very Emphasised</strong></em>
+    #   #                                       ^
+    #
+    # @param html [String]
+    # @param name [String] filename or http path or email subject or etc to print in the error message
+    # @param content_type [String] mime type of the document to assist determining encoding
+    # @param raise_on_invalid_html [Boolean] override {Configuration#raise_on_invalid_html}
+    # @return [Boolean] true if there are no validation errors
+    # @raise [InvalidHTMLError] if the html is not valid and raise_on_invalid_html is true
+    def validate_html(html, name: nil, content_type: nil, raise_on_invalid_html: configuration.raise_on_invalid_html?)
+      return true if html.empty?
 
-    def configure
-      yield configuration if block_given?
-    end
-
-    def validate_html(body, content_type: nil, name: nil, raise_on_invalid_html: configuration.raise_on_invalid_html?)
-      return true if body.empty?
-
-      doc = parse_html(body, find_encoding(content_type))
+      doc = parse_html(html, find_encoding(content_type))
 
       errors = filter_errors(doc.errors)
 
       return true if errors.empty?
 
-      handle_errors(name, doc, body, errors, raise_on_invalid_html)
+      handle_errors(name, doc, html, errors, raise_on_invalid_html)
 
       false
     end
 
-    def remembered_messages
-      @remembered_messages ||= []
-    end
-
-    def forget_messages
-      @remembered_messages = []
-    end
-
+    # Raise any remembered messages
+    #
+    # @return [void]
+    # @raise [InvalidHTMLError] if there are remembered messages
+    # @raise [NotRememberingMessagesError] if {Configuration#remember_messages} is false
     def raise_remembered_messages
       fail NotRememberingMessagesError unless configuration.remember_messages?
       return if remembered_messages.blank?
 
       messages = remembered_messages
       forget_messages
-      fail InvalidHTMLError, messages.join("\n---\n")
+      fail InvalidHTMLError, messages.uniq.join("\n---\n")
+    end
+
+    # @!attribute [r] remembered_messages
+    # @return [Array<String>]
+    def remembered_messages
+      @remembered_messages ||= []
+    end
+
+    # Clear any remembered messages
+    # @return [void]
+    def forget_messages
+      @remembered_messages = []
+    end
+
+    # @!attribute [r] configuration
+    # @return [Configuration]
+    def configuration
+      @configuration ||= Configuration.new
+    end
+
+    # Configure ValidateHTML
+    #
+    # @example
+    #   ValidateHTML.configure do |c|
+    #     c.remember_messages = true
+    #     c.environments = ['test']
+    #   end
+    # @yieldparam config [Configuration]
+    # @return [void]
+    def configure
+      yield configuration if block_given?
     end
 
     private
@@ -68,10 +148,9 @@ module ValidateHTML
       message = <<~ERROR
         Invalid html#{" from #{name}" if name}
         Parsed using #{doc.class}
+        document saved at: #{path}
 
         #{errors.join("\n")}
-
-        document saved at: #{path}"
       ERROR
 
       remembered_messages << message if configuration.remember_messages?
@@ -105,5 +184,3 @@ module ValidateHTML
     end
   end
 end
-
-require_relative "validate_html/railtie" if defined?(::Rails::Railtie)

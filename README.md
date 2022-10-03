@@ -1,8 +1,6 @@
 # ValidateHTML
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/validate_html`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Validate HTML as it leaves your rails application.
 
 ## Installation
 
@@ -22,7 +20,12 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+When included in your Gemfile, when in `development` & `test` environments ValidateHTML will automatically check html leaving your app via rack or html emails or turbo streams for invalid HTML using nokogiri.
+
+To validate a block of HTML outside of these contexts (including outside of rails entirely), you can use
+```ruby
+ValidateHTML.validate_html(my_html_here, **options)
+```
 
 ## Development
 
@@ -32,7 +35,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/validate_html.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ackama/validate_html.
 
 ## License
 
