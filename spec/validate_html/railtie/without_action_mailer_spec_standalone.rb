@@ -1,5 +1,6 @@
+require "bundler/setup"
 require 'rails'
-require_relative '../../lib/validate_html/railtie'
+require 'spec_helper'
 
 RSpec.describe ValidateHTML::Railtie do
   let(:app) do

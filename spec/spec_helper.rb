@@ -1,5 +1,6 @@
 require "bundler/setup"
-require "validate_html"
+require 'simplecov' if ENV['COVERAGE']
+require_relative "../lib/validate_html"
 
 module SpecHelper
   def stub_config(**config)

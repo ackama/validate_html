@@ -40,4 +40,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "mail"
   spec.add_development_dependency "spellr"
   spec.add_development_dependency "leftovers"
+  spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "simplecov-console"
 end

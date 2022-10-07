@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
   let(:snapshot_path) { Pathname.new(__dir__).join('../tmp/test_snapshots') }
 
@@ -16,7 +18,7 @@ RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
           <<~MESSAGE
             Invalid html
             Parsed using Nokogiri::HTML5::DocumentFragment
-            document saved at: #{File.dirname(__dir__)}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+            document saved at: #{File.dirname(__dir__)}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
             1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
             <strong><em>Very Emphasized</strong></em>
@@ -35,6 +37,15 @@ RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
         channel_class: 'something else',
         data: '<strong><em>Very Emphasized</strong></em>'
       }
+
+      expect { ValidateHTML::ActiveSupportNotificationHandler.call(nil, nil, nil, nil, payload) }
+        .to_not raise_error
+    end
+
+    it "ignores null payloads" do
+      stub_config(snapshot_path: snapshot_path)
+
+      payload = nil
 
       expect { ValidateHTML::ActiveSupportNotificationHandler.call(nil, nil, nil, nil, payload) }
         .to_not raise_error

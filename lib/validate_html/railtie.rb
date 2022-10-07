@@ -28,8 +28,6 @@ module ValidateHTML
         ]
       end
 
-      next unless defined?(::ActiveSupport::Notifications)
-
       ::ActiveSupport::Notifications.subscribe(
         "transmit.action_cable",
         ::ValidateHTML::ActiveSupportNotificationHandler

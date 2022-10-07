@@ -20,7 +20,7 @@ module ValidateHTML
   #   #
   #   #   Invalid html from My Emphasized Fragment (ValidateHTML::InvalidHTMLError)
   #   #   Parsed using Nokogiri::HTML5::DocumentFragment
-  #   #   document saved at: [Configuration#snapshot_path]/2567357e17ee0c948b6bfe13a95120d1da678775.html
+  #   #   document saved at: [Configuration#snapshot_path]/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
   #   #
   #   #   1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
   #   #   <strong><em>Very Emphasized</strong></em>
@@ -56,7 +56,7 @@ module ValidateHTML
     #   #
     #   #   Invalid html from My Emphasized Fragment (ValidateHTML::InvalidHTMLError)
     #   #   Parsed using Nokogiri::HTML5::DocumentFragment
-    #   #   Document saved at: [Configuration#snapshot_path]/2567357e17ee0c948b6bfe13a95120d1da678775.html
+    #   #   Document saved at: [Configuration#snapshot_path]/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
     #   #
     #   #   1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
     #   #   <strong><em>Very Emphasized</strong></em>
@@ -127,7 +127,7 @@ module ValidateHTML
     # @yieldparam config [Configuration]
     # @return [void]
     def configure
-      yield configuration if block_given?
+      yield configuration
     end
 
     private

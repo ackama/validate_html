@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 RSpec.describe ValidateHTML::Configuration do
   describe '#raise_on_invalid_html' do
     it 'defaults to true' do

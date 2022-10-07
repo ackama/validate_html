@@ -1,8 +1,10 @@
+require 'spec_helper'
+
 RSpec.describe ValidateHTML do
   let(:snapshot_path) { Pathname.new(__dir__).join('tmp/test_snapshots') }
 
   it "has a version number" do
-    expect(ValidateHTML::VERSION).not_to be nil
+    expect(ValidateHTML::VERSION).not_to be '0.1.0'
   end
 
   describe '.validate_html' do
@@ -15,7 +17,7 @@ RSpec.describe ValidateHTML do
         <<~MESSAGE
           Invalid html from My Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
-          document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+          document saved at: #{__dir__}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
           <strong><em>Very Emphasized</strong></em>
@@ -23,6 +25,42 @@ RSpec.describe ValidateHTML do
           1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
           <strong><em>Very Emphasized</strong></em>
                                               ^
+        MESSAGE
+      )
+    end
+
+    it "raises for invalid html5 document" do
+      stub_config(snapshot_path: snapshot_path)
+      expect { ValidateHTML.validate_html('<!doctype html><strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment') }
+        .to raise_error(
+        ValidateHTML::InvalidHTMLError,
+        <<~MESSAGE
+          Invalid html from My Emphasized Fragment
+          Parsed using Nokogiri::HTML5::Document
+          document saved at: #{__dir__}/tmp/test_snapshots/6a3314cce39b0b1361363560c085c70265f886c6.html
+
+          1:43: ERROR: That tag isn't allowed here  Currently open tags: html, body, strong, em.
+          <!doctype html><strong><em>Very Emphasized</strong></em>
+                                                    ^
+          1:52: ERROR: That tag isn't allowed here  Currently open tags: html, body.
+          <!doctype html><strong><em>Very Emphasized</strong></em>
+                                                             ^
+        MESSAGE
+      )
+    end
+
+    it "raises for invalid html4 document" do
+      stub_config(snapshot_path: snapshot_path)
+      expect { ValidateHTML.validate_html('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment') }
+        .to raise_error(
+        ValidateHTML::InvalidHTMLError,
+        <<~MESSAGE
+          Invalid html from My Emphasized Fragment
+          Parsed using Nokogiri::HTML4::Document
+          document saved at: #{__dir__}/tmp/test_snapshots/dc0e625033c7fb309e89725ef947564991f651b1.html
+
+          1:127: ERROR: Opening and ending tag mismatch: strong and em
+          1:132: ERROR: Unexpected end tag : em
         MESSAGE
       )
     end
@@ -35,7 +73,7 @@ RSpec.describe ValidateHTML do
     end
 
     it "only ignores errors that have been ignored with strings when they match exactly" do
-      stub_config(ignored_errors: ["That tag isn't allowed here"])
+      stub_config(ignored_errors: ["That tag isn't allowed here"], snapshot_path: snapshot_path)
 
       expect { ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment') }
         .to raise_error(ValidateHTML::InvalidHTMLError)
@@ -56,7 +94,7 @@ RSpec.describe ValidateHTML do
           <<~MESSAGE
             Invalid html from My Emphasized Fragment
             Parsed using Nokogiri::HTML5::DocumentFragment
-            document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+            document saved at: #{__dir__}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
             1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
             <strong><em>Very Emphasized</strong></em>
@@ -67,6 +105,16 @@ RSpec.describe ValidateHTML do
 
     it "returns true for valid html" do
       expect(ValidateHTML.validate_html('<strong><em>Very Emphasized</em></strong>')).to be true
+    end
+
+    it "returns true for empty strings" do
+      expect(ValidateHTML.validate_html('')).to be true
+    end
+
+    it "can be given a content type" do
+      allow(Nokogiri::HTML5).to receive(:fragment).and_call_original
+      expect(ValidateHTML.validate_html('body', content_type: 'text/html; charset=utf-8')).to be true
+      expect(Nokogiri::HTML5).to have_received(:fragment).with('body', 'utf-8', max_errors: -1)
     end
   end
 
@@ -97,7 +145,7 @@ RSpec.describe ValidateHTML do
         <<~ERROR
           Invalid html from My First Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
-          document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+          document saved at: #{__dir__}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
           <strong><em>Very Emphasized</strong></em>
@@ -108,7 +156,7 @@ RSpec.describe ValidateHTML do
           ---
           Invalid html from My Second Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
-          document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+          document saved at: #{__dir__}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
           <strong><em>Very Emphasized</strong></em>
@@ -134,7 +182,7 @@ RSpec.describe ValidateHTML do
         <<~ERROR
           Invalid html from My First Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
-          document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+          document saved at: #{__dir__}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
           <strong><em>Very Emphasized</strong></em>
@@ -145,7 +193,7 @@ RSpec.describe ValidateHTML do
           ---
           Invalid html from My Second Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
-          document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+          document saved at: #{__dir__}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
           <strong><em>Very Emphasized</strong></em>
@@ -173,7 +221,7 @@ RSpec.describe ValidateHTML do
         <<~ERROR
           Invalid html from My First Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
-          document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+          document saved at: #{__dir__}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
           <strong><em>Very Emphasized</strong></em>
@@ -184,7 +232,7 @@ RSpec.describe ValidateHTML do
           ---
           Invalid html from My Second Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
-          document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
+          document saved at: #{__dir__}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
           <strong><em>Very Emphasized</strong></em>
