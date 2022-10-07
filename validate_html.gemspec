@@ -38,4 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry"
   spec.add_development_dependency "actionmailer"
   spec.add_development_dependency "mail"
+  spec.add_development_dependency "spellr"
 end

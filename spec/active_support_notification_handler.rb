@@ -7,7 +7,7 @@ RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
 
       payload = {
         channel_class: 'Turbo::StreamsChannel',
-        data: '<strong><em>Very Emphasised</strong></em>'
+        data: '<strong><em>Very Emphasized</strong></em>'
       }
 
       expect { ValidateHTML::ActiveSupportNotificationHandler.call(nil, nil, nil, nil, payload) }
@@ -19,10 +19,10 @@ RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
             document saved at: #{File.dirname(__dir__)}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
             1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-            <strong><em>Very Emphasised</strong></em>
+            <strong><em>Very Emphasized</strong></em>
                                        ^
             1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-            <strong><em>Very Emphasised</strong></em>
+            <strong><em>Very Emphasized</strong></em>
                                                 ^
           MESSAGE
       )
@@ -33,7 +33,7 @@ RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
 
       payload = {
         channel_class: 'something else',
-        data: '<strong><em>Very Emphasised</strong></em>'
+        data: '<strong><em>Very Emphasized</strong></em>'
       }
 
       expect { ValidateHTML::ActiveSupportNotificationHandler.call(nil, nil, nil, nil, payload) }

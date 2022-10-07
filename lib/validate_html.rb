@@ -15,18 +15,18 @@ module ValidateHTML
   # with a path to the snapshot to assist resolving the invalid html
   #
   # @example
-  #   ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Emphasised Fragment')
+  #   ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment')
   #   # raises: ValidateHTML::InvalidHTMLError with this message:
   #   #
-  #   #   Invalid html from My Emphasised Fragment (ValidateHTML::InvalidHTMLError)
+  #   #   Invalid html from My Emphasized Fragment (ValidateHTML::InvalidHTMLError)
   #   #   Parsed using Nokogiri::HTML5::DocumentFragment
   #   #   document saved at: [Configuration#snapshot_path]/2567357e17ee0c948b6bfe13a95120d1da678775.html
   #   #
   #   #   1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-  #   #   <strong><em>Very Emphasised</strong></em>
+  #   #   <strong><em>Very Emphasized</strong></em>
   #   #                              ^
   #   #   1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-  #   #   <strong><em>Very Emphasised</strong></em>
+  #   #   <strong><em>Very Emphasized</strong></em>
   #   #                                       ^
   # @see ValidateHTML.validate_html
   # @see ValidateHTML.raise_remembered_messages
@@ -51,18 +51,18 @@ module ValidateHTML
     # if there are no errors, return true
     #
     # @example
-    #   ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Emphasised Fragment')
+    #   ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment')
     #   # raises: ValidateHTML::InvalidHTMLError with this message:
     #   #
-    #   #   Invalid html from My Emphasised Fragment (ValidateHTML::InvalidHTMLError)
+    #   #   Invalid html from My Emphasized Fragment (ValidateHTML::InvalidHTMLError)
     #   #   Parsed using Nokogiri::HTML5::DocumentFragment
     #   #   Document saved at: [Configuration#snapshot_path]/2567357e17ee0c948b6bfe13a95120d1da678775.html
     #   #
     #   #   1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-    #   #   <strong><em>Very Emphasised</strong></em>
+    #   #   <strong><em>Very Emphasized</strong></em>
     #   #                              ^
     #   #   1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-    #   #   <strong><em>Very Emphasised</strong></em>
+    #   #   <strong><em>Very Emphasized</strong></em>
     #   #                                       ^
     #
     # @param html [String]

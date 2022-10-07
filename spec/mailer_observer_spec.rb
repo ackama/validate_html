@@ -6,7 +6,7 @@ RSpec.describe ValidateHTML::MailerObserver do
     Mail.new(subject: 'The Subject', body: '>text body<')
   end
   let(:html_email) do
-    email.html_part = '<strong><em>Very Emphasised</strong></em>'
+    email.html_part = '<strong><em>Very Emphasized</strong></em>'
     email
   end
 
@@ -23,10 +23,10 @@ RSpec.describe ValidateHTML::MailerObserver do
             document saved at: #{File.dirname(__dir__)}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
             1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-            <strong><em>Very Emphasised</strong></em>
+            <strong><em>Very Emphasized</strong></em>
                                        ^
             1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-            <strong><em>Very Emphasised</strong></em>
+            <strong><em>Very Emphasized</strong></em>
                                                 ^
           MESSAGE
       )

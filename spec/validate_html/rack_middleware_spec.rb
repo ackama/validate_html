@@ -7,7 +7,7 @@ RSpec.describe ValidateHTML::RackMiddleware do
   subject(:middleware) { ValidateHTML::RackMiddleware.new(app) }
 
   context 'with no content type' do
-    it "dosen't check the response" do
+    it "doesn't check the response" do
       expect { middleware.call(env) }.to_not raise_error
     end
   end

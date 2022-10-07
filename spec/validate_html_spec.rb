@@ -9,19 +9,19 @@ RSpec.describe ValidateHTML do
     it "raises for invalid html" do
       stub_config(snapshot_path: snapshot_path)
 
-      expect { ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Emphasised Fragment') }
+      expect { ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment') }
         .to raise_error(
         ValidateHTML::InvalidHTMLError,
         <<~MESSAGE
-          Invalid html from My Emphasised Fragment
+          Invalid html from My Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
           document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                      ^
           1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                               ^
         MESSAGE
       )
@@ -30,14 +30,14 @@ RSpec.describe ValidateHTML do
     it "ignores errors that have been ignored with regexp" do
       stub_config(ignored_errors: [/That tag isn't allowed here/])
 
-      expect { ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Emphasised Fragment') }
+      expect { ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment') }
         .to_not raise_error
     end
 
     it "only ignores errors that have been ignored with strings when they match exactly" do
       stub_config(ignored_errors: ["That tag isn't allowed here"])
 
-      expect { ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Emphasised Fragment') }
+      expect { ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment') }
         .to raise_error(ValidateHTML::InvalidHTMLError)
     end
 
@@ -45,28 +45,28 @@ RSpec.describe ValidateHTML do
       stub_config(snapshot_path: snapshot_path, ignored_errors: [
         <<~MESSAGE.chomp
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                      ^
         MESSAGE
       ])
 
-      expect { ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Emphasised Fragment') }
+      expect { ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Emphasized Fragment') }
         .to raise_error(
           ValidateHTML::InvalidHTMLError,
           <<~MESSAGE
-            Invalid html from My Emphasised Fragment
+            Invalid html from My Emphasized Fragment
             Parsed using Nokogiri::HTML5::DocumentFragment
             document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
             1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-            <strong><em>Very Emphasised</strong></em>
+            <strong><em>Very Emphasized</strong></em>
                                                 ^
           MESSAGE
         )
     end
 
     it "returns true for valid html" do
-      expect(ValidateHTML.validate_html('<strong><em>Very Emphasised</em></strong>')).to be true
+      expect(ValidateHTML.validate_html('<strong><em>Very Emphasized</em></strong>')).to be true
     end
   end
 
@@ -90,31 +90,31 @@ RSpec.describe ValidateHTML do
         remember_messages?: true
       )
 
-      ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My First Emphasised Fragment')
-      ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Second Emphasised Fragment')
+      ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My First Emphasized Fragment')
+      ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Second Emphasized Fragment')
       expect { ValidateHTML.raise_remembered_messages }.to raise_error(
         ValidateHTML::InvalidHTMLError,
         <<~ERROR
-          Invalid html from My First Emphasised Fragment
+          Invalid html from My First Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
           document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                      ^
           1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                               ^
           ---
-          Invalid html from My Second Emphasised Fragment
+          Invalid html from My Second Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
           document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                      ^
           1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                               ^
         ERROR
       )
@@ -127,31 +127,31 @@ RSpec.describe ValidateHTML do
         remember_messages?: true
       )
 
-      ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My First Emphasised Fragment')
-      ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Second Emphasised Fragment')
+      ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My First Emphasized Fragment')
+      ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Second Emphasized Fragment')
       expect { ValidateHTML.raise_remembered_messages }.to raise_error(
         ValidateHTML::InvalidHTMLError,
         <<~ERROR
-          Invalid html from My First Emphasised Fragment
+          Invalid html from My First Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
           document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                      ^
           1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                               ^
           ---
-          Invalid html from My Second Emphasised Fragment
+          Invalid html from My Second Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
           document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                      ^
           1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                               ^
         ERROR
       )
@@ -166,31 +166,31 @@ RSpec.describe ValidateHTML do
         remember_messages?: true
       )
 
-      expect { ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My First Emphasised Fragment') }.to raise_error(ValidateHTML::InvalidHTMLError)
-      expect { ValidateHTML.validate_html('<strong><em>Very Emphasised</strong></em>', name: 'My Second Emphasised Fragment') }.to raise_error(ValidateHTML::InvalidHTMLError)
+      expect { ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My First Emphasized Fragment') }.to raise_error(ValidateHTML::InvalidHTMLError)
+      expect { ValidateHTML.validate_html('<strong><em>Very Emphasized</strong></em>', name: 'My Second Emphasized Fragment') }.to raise_error(ValidateHTML::InvalidHTMLError)
       expect { ValidateHTML.raise_remembered_messages }.to raise_error(
         ValidateHTML::InvalidHTMLError,
         <<~ERROR
-          Invalid html from My First Emphasised Fragment
+          Invalid html from My First Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
           document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                      ^
           1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                               ^
           ---
-          Invalid html from My Second Emphasised Fragment
+          Invalid html from My Second Emphasized Fragment
           Parsed using Nokogiri::HTML5::DocumentFragment
           document saved at: #{__dir__}/tmp/test_snapshots/2567357e17ee0c948b6bfe13a95120d1da678775.html
 
           1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                      ^
           1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-          <strong><em>Very Emphasised</strong></em>
+          <strong><em>Very Emphasized</strong></em>
                                               ^
         ERROR
       )
