@@ -8,7 +8,6 @@ module ValidateHTML
   #
   # @see ValidateHTML.configure
   class Configuration
-
     # Set to false to not raise {InvalidHTMLError} by default
     #
     # Defaults to true
@@ -31,11 +30,11 @@ module ValidateHTML
 
     # Error messages to ignore
     # @return [Array<String, Regexp>]
-    attr_accessor :ignored_errors
+    attr_reader :ignored_errors
 
     # App-relative paths to skip automatic validation
     # @return [Array<String, Regexp>]
-    attr_accessor :ignored_paths
+    attr_reader :ignored_paths
 
     # The rails environments to initialize automatic validation
     #
@@ -70,6 +69,32 @@ module ValidateHTML
 
     def snapshot_path=(path)
       @snapshot_path = path.is_a?(Pathname) ? path : ::Pathname.new(path)
+    end
+
+    def ignored_errors=(errors)
+      @ignored_errors = errors
+      @ignored_errors_re = nil
+    end
+
+    def ignored_paths=(paths)
+      @ignored_paths = paths
+      @ignored_paths_re = nil
+    end
+
+    # @!visibility private
+    def ignored_errors_re
+      @ignored_errors_re ||= list_to_re(ignored_errors)
+    end
+
+    # @!visibility private
+    def ignored_paths_re
+      @ignored_paths_re ||= list_to_re(ignored_paths)
+    end
+
+    private
+
+    def list_to_re(list)
+      Regexp.union(list.map { |i| i.is_a?(Regexp) ? i : /\A#{Regexp.escape(i)}\z/ })
     end
   end
 end

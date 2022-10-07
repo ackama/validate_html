@@ -1,4 +1,6 @@
-require "bundler/setup"
+# frozen_string_literal: true
+
+require 'bundler/setup'
 require 'rails'
 require 'spec_helper'
 
@@ -10,7 +12,7 @@ RSpec.describe ValidateHTML::Railtie do
 
     expect(ActiveSupport::Notifications.notifier).to be_listening('transmit.action_cable')
     allow(::ValidateHTML::ActiveSupportNotificationHandler).to receive(:call)
-    payload = { data: '<html>', channel_class: 'Turbo::StreamsChannel'}
+    payload = { data: '<html>', channel_class: 'Turbo::StreamsChannel' }
     ActiveSupport::Notifications.instrument('transmit.action_cable', payload) { nil }
     expect(::ValidateHTML::ActiveSupportNotificationHandler).to have_received(:call)
       .with(*anything, *anything, *anything, *anything, payload)

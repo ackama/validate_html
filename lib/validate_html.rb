@@ -1,14 +1,17 @@
+# frozen_string_literal: true
+
 # frozen_string_literals: true
 
-require_relative "validate_html/version"
-require_relative "validate_html/configuration"
-require_relative "validate_html/rack_middleware"
-require_relative "validate_html/mailer_observer"
-require_relative "validate_html/active_support_notification_handler"
-require_relative "validate_html/railtie" if defined?(::Rails::Railtie)
-require "nokogiri"
-require "digest"
+require_relative 'validate_html/version'
+require_relative 'validate_html/configuration'
+require_relative 'validate_html/rack_middleware'
+require_relative 'validate_html/mailer_observer'
+require_relative 'validate_html/active_support_notification_handler'
+require_relative 'validate_html/railtie' if defined?(::Rails::Railtie)
+require 'nokogiri'
+require 'digest'
 
+# Validate HTML as it leaves your rails application
 module ValidateHTML
   class Error < StandardError; end
   # This error message will include the full html validation details,
@@ -32,7 +35,9 @@ module ValidateHTML
   # @see ValidateHTML.raise_remembered_messages
   class InvalidHTMLError < Error; end
 
-  # This error will be raised when calling {ValidateHTML.raise_remembered_messages} while {Configuration#remember_messages} is false
+  # This error will be raised when calling {ValidateHTML.raise_remembered_messages}
+  # when {Configuration#remember_messages} is false
+  #
   # @see ValidateHTML.raise_remembered_messages
   # @see Configuration#remember_messages
   class NotRememberingMessagesError < Error; end
@@ -91,12 +96,12 @@ module ValidateHTML
     # @raise [InvalidHTMLError] if there are remembered messages
     # @raise [NotRememberingMessagesError] if {Configuration#remember_messages} is false
     def raise_remembered_messages
-      fail NotRememberingMessagesError unless configuration.remember_messages?
+      raise NotRememberingMessagesError unless configuration.remember_messages?
       return if remembered_messages.empty?
 
       messages = remembered_messages
       forget_messages
-      fail InvalidHTMLError, messages.uniq.join("---\n")
+      raise InvalidHTMLError, messages.uniq.join("---\n")
     end
 
     # @!attribute [r] remembered_messages
@@ -133,12 +138,7 @@ module ValidateHTML
     private
 
     def filter_errors(errors)
-      errors.reject do |error|
-        error = error.to_s
-        configuration.ignored_errors.any? do |permitted|
-          permitted === error
-        end
-      end
+      errors.map(&:to_s).grep_v(configuration.ignored_errors_re)
     end
 
     def handle_errors(name, doc, body, errors, raise_on_invalid_html)
@@ -156,7 +156,7 @@ module ValidateHTML
 
       remembered_messages << message if configuration.remember_messages?
 
-      fail InvalidHTMLError, message if raise_on_invalid_html
+      raise InvalidHTMLError, message if raise_on_invalid_html
 
       warn message
     end
@@ -181,7 +181,7 @@ module ValidateHTML
       return unless content_type
 
       parts = content_type.split(/;\s*/)
-      parts.find { |part| part.start_with?("charset=") }&.delete_prefix("charset=")
+      parts.find { |part| part.start_with?('charset=') }&.delete_prefix('charset=')
     end
   end
 end

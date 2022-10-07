@@ -1,13 +1,17 @@
+# frozen_string_literal: true
+
 module ValidateHTML
+  # Validate the HTML of outgoing mail
+  # Use standalone or as an ActionMailer interceptor, observer, or preview_interceptor
   module MailerObserver
     class << self
       # Validate the HTML of outgoing mail
-      #
-      # This can be used standalone or with ActionMailer as interceptor, or an observer, or a preview_interceptor
+      # Use standalone or as an ActionMailer interceptor, observer, or preview_interceptor
       #
       # @param email [Mail]
       # @return [Mail] unmodified from the passed in param
-      # @raise {InvalidHTMLError} if the html_part of the email is invalid and {Configuration#raise_on_invalid_html} is true
+      # @raise {InvalidHTMLError} if the html_part of the email is invalid
+      #   and {Configuration#raise_on_invalid_html} is true
       # @see ValidateHTML.validate_html
       def perform(email)
         html_part = email.html_part
@@ -22,9 +26,9 @@ module ValidateHTML
         email
       end
 
-      alias delivering_email perform
-      alias delivered_email perform
-      alias previewing_email perform
+      alias_method :delivering_email, :perform
+      alias_method :delivered_email, :perform
+      alias_method :previewing_email, :perform
     end
   end
 end

@@ -1,4 +1,6 @@
-require "bundler/setup"
+# frozen_string_literal: true
+
+require 'bundler/setup'
 require 'rails'
 require 'spec_helper'
 
@@ -8,7 +10,7 @@ RSpec.describe ValidateHTML::Railtie do
   end
 
   it 'can initialize without ActionMailer' do
-    expect(defined?(ActionMailer)).to be nil
+    expect(defined?(ActionMailer)).to be_nil
 
     app.initialize!
     expect(app.middleware.to_a).to include(ValidateHTML::RackMiddleware)

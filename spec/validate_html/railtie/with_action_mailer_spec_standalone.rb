@@ -1,4 +1,6 @@
-require "bundler/setup"
+# frozen_string_literal: true
+
+require 'bundler/setup'
 require 'rails'
 require 'spec_helper'
 require 'action_mailer/railtie'

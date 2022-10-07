@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'mail'
 
@@ -13,10 +15,10 @@ RSpec.describe ValidateHTML::MailerObserver do
   end
 
   describe '.perform' do
-    it "validates html email" do
+    it 'validates html email' do
       stub_config(snapshot_path: snapshot_path)
 
-      expect { ValidateHTML::MailerObserver.perform(html_email) }
+      expect { described_class.perform(html_email) }
         .to raise_error(
           ValidateHTML::InvalidHTMLError,
           <<~MESSAGE
@@ -31,44 +33,23 @@ RSpec.describe ValidateHTML::MailerObserver do
             <strong><em>Very Emphasized</strong></em>
                                                 ^
           MESSAGE
-      )
+        )
     end
 
     context 'with valid html' do
       let(:html) { '<strong><em>Very Emphasized</em></strong>' }
 
-      it "validates html email" do
+      it 'validates html email' do
         stub_config(snapshot_path: snapshot_path)
 
-        expect { ValidateHTML::MailerObserver.perform(html_email) }
-          .to_not raise_error
+        expect { described_class.perform(html_email) }
+          .not_to raise_error
       end
     end
 
-    it "validates html email" do
-      stub_config(snapshot_path: snapshot_path)
-
-      expect { ValidateHTML::MailerObserver.perform(html_email) }
-        .to raise_error(
-          ValidateHTML::InvalidHTMLError,
-          <<~MESSAGE
-            Invalid html from email The Subject
-            Parsed using Nokogiri::HTML5::DocumentFragment
-            document saved at: #{File.dirname(__dir__)}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
-
-            1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
-            <strong><em>Very Emphasized</strong></em>
-                                       ^
-            1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
-            <strong><em>Very Emphasized</strong></em>
-                                                ^
-          MESSAGE
-      )
-    end
-
-    it "ignores non-html email" do
-      expect { ValidateHTML::MailerObserver.perform(email) }
-        .to_not raise_error
+    it 'ignores non-html email' do
+      expect { described_class.perform(email) }
+        .not_to raise_error
     end
 
     it 'has aliases to methods that rails uses' do

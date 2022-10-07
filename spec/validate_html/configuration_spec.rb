@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe ValidateHTML::Configuration do
@@ -36,33 +38,37 @@ RSpec.describe ValidateHTML::Configuration do
   describe '#ignored_errors' do
     it 'defaults to empty array' do
       expect(subject.ignored_errors).to eq []
+      expect(subject.ignored_errors_re).to eq(/(?!)/)
     end
 
     it 'can be written' do
-      subject.ignored_errors = ['unavoidable upstream error']
-      expect(subject.ignored_errors).to eq ['unavoidable upstream error']
+      subject.ignored_errors = ['* unavoidable upstream error', /invalid\z/]
+      expect(subject.ignored_errors).to eq ['* unavoidable upstream error', /invalid\z/]
+      expect(subject.ignored_errors_re).to eq(/(?-mix:\A\*\ unavoidable\ upstream\ error\z)|(?-mix:invalid\z)/)
     end
   end
 
   describe '#ignored_paths' do
     it 'defaults to empty array' do
       expect(subject.ignored_paths).to eq []
+      expect(subject.ignored_paths_re).to eq(/(?!)/)
     end
 
     it 'can be written' do
-      subject.ignored_paths = ['/admin']
-      expect(subject.ignored_paths).to eq ['/admin']
+      subject.ignored_paths = ['/admin.html', /\.htm\z/]
+      expect(subject.ignored_paths).to eq ['/admin.html', /\.htm\z/]
+      expect(subject.ignored_paths_re).to eq %r{(?-mix:\A/admin\.html\z)|(?-mix:\.htm\z)}
     end
   end
 
   describe '#environments' do
     it 'defaults to development and test' do
-      expect(subject.environments).to eq ["development", "test"]
+      expect(subject.environments).to eq %w[development test]
     end
 
     it 'can be written' do
-      subject.environments = ['development', 'test', 'staging']
-      expect(subject.environments).to eq ['development', 'test', 'staging']
+      subject.environments = %w[development test staging]
+      expect(subject.environments).to eq %w[development test staging]
     end
   end
 

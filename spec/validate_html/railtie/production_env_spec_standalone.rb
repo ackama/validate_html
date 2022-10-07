@@ -1,4 +1,6 @@
-require "bundler/setup"
+# frozen_string_literal: true
+
+require 'bundler/setup'
 require 'rails'
 require 'spec_helper'
 require 'action_mailer/railtie'
@@ -14,10 +16,10 @@ RSpec.describe ValidateHTML::Railtie do
     allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
     app.initialize!
 
-    expect(app.middleware.to_a).to_not include(ValidateHTML::RackMiddleware)
-    expect(app.config.action_mailer.interceptors).to be nil
-    expect(app.config.action_mailer.observers).to be nil
-    expect(app.config.action_mailer.preview_interceptors).to be nil
-    expect(ActiveSupport::Notifications.notifier).to_not be_listening('transmit.action_cable')
+    expect(app.middleware.to_a).not_to include(ValidateHTML::RackMiddleware)
+    expect(app.config.action_mailer.interceptors).to be_nil
+    expect(app.config.action_mailer.observers).to be_nil
+    expect(app.config.action_mailer.preview_interceptors).to be_nil
+    expect(ActiveSupport::Notifications.notifier).not_to be_listening('transmit.action_cable')
   end
 end

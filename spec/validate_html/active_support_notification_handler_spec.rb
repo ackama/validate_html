@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
   let(:snapshot_path) { Pathname.new(__dir__).join('../tmp/test_snapshots') }
 
   describe '.call' do
-    it "validates turbo html" do
+    it 'validates turbo html' do
       stub_config(snapshot_path: snapshot_path)
 
       payload = {
@@ -12,7 +14,7 @@ RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
         data: '<strong><em>Very Emphasized</strong></em>'
       }
 
-      expect { ValidateHTML::ActiveSupportNotificationHandler.call(nil, nil, nil, nil, payload) }
+      expect { described_class.call(nil, nil, nil, nil, payload) }
         .to raise_error(
           ValidateHTML::InvalidHTMLError,
           <<~MESSAGE
@@ -27,10 +29,10 @@ RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
             <strong><em>Very Emphasized</strong></em>
                                                 ^
           MESSAGE
-      )
+        )
     end
 
-    it "ignores non-turbo payloads" do
+    it 'ignores non-turbo payloads' do
       stub_config(snapshot_path: snapshot_path)
 
       payload = {
@@ -38,17 +40,17 @@ RSpec.describe ValidateHTML::ActiveSupportNotificationHandler do
         data: '<strong><em>Very Emphasized</strong></em>'
       }
 
-      expect { ValidateHTML::ActiveSupportNotificationHandler.call(nil, nil, nil, nil, payload) }
-        .to_not raise_error
+      expect { described_class.call(nil, nil, nil, nil, payload) }
+        .not_to raise_error
     end
 
-    it "ignores null payloads" do
+    it 'ignores null payloads' do
       stub_config(snapshot_path: snapshot_path)
 
       payload = nil
 
-      expect { ValidateHTML::ActiveSupportNotificationHandler.call(nil, nil, nil, nil, payload) }
-        .to_not raise_error
+      expect { described_class.call(nil, nil, nil, nil, payload) }
+        .not_to raise_error
     end
   end
 end

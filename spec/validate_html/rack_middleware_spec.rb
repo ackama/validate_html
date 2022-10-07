@@ -1,14 +1,18 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe ValidateHTML::RackMiddleware do
-  let(:path) { "/sessions/new" }
+  subject(:middleware) { described_class.new(app) }
+
+  let(:path) { '/sessions/new' }
   let(:headers) { {} }
-  let(:body) { "<strong><em>Emphasis</strong></em>" }
+  let(:body) { '<strong><em>Emphasis</strong></em>' }
   let(:env) { Rack::MockRequest.env_for(path) }
-  let(:app) { ->(env) { [200, headers, body] } }
-  subject(:middleware) { ValidateHTML::RackMiddleware.new(app) }
+  let(:app) { ->(_env) { [200, headers, body] } }
 
   let(:snapshot_path) { Pathname.new(__dir__).join('../tmp/test_snapshots') }
+
   before { stub_config(snapshot_path: snapshot_path) }
 
   context 'with no content type' do
@@ -26,7 +30,7 @@ RSpec.describe ValidateHTML::RackMiddleware do
     end
 
     context 'with valid html' do
-      let(:body) { "<strong><em>Emphasis</em></strong>" }
+      let(:body) { '<strong><em>Emphasis</em></strong>' }
 
       it "doesn't raise an error" do
         expect(middleware.call(env)).to eq [200, headers, body]
@@ -34,7 +38,7 @@ RSpec.describe ValidateHTML::RackMiddleware do
     end
 
     context 'with invalid html in an array for some reason' do
-      let(:body) { ["<strong><em>Emphasis</strong></em>"] }
+      let(:body) { ['<strong><em>Emphasis</strong></em>'] }
 
       it 'checks the response' do
         expect { middleware.call(env) }
@@ -43,7 +47,7 @@ RSpec.describe ValidateHTML::RackMiddleware do
     end
 
     context 'with invalid html in a nested response for some reason' do
-      let(:body) { Rack::MockResponse.new(200, headers, "<strong><em>Emphasis</strong></em>") }
+      let(:body) { Rack::MockResponse.new(200, headers, '<strong><em>Emphasis</strong></em>') }
 
       it 'checks the response' do
         expect { middleware.call(env) }
@@ -52,9 +56,11 @@ RSpec.describe ValidateHTML::RackMiddleware do
     end
 
     context 'with a body that lies about what it responds to' do
+      let(:body) { +'' }
+
       before { allow(body).to receive(:to_str).and_raise(NoMethodError) }
 
-      it "it ignores it and doesn't raise an error" do
+      it "ignores it and doesn't raise an error" do
         expect(middleware.call(env)).to eq [200, headers, body]
       end
     end
@@ -62,14 +68,14 @@ RSpec.describe ValidateHTML::RackMiddleware do
     context 'with a body that is some other thing' do
       let(:body) { 1 }
 
-      it "it ignores it and doesn't raise an error" do
+      it "ignores it and doesn't raise an error" do
         expect(middleware.call(env)).to eq [200, headers, body]
       end
     end
 
     context 'with string ignored path' do
       before do
-        stub_config(ignored_paths: ["/sessions/new"])
+        stub_config(ignored_paths: ['/sessions/new'])
       end
 
       it "doesn't raise an error" do
@@ -79,7 +85,7 @@ RSpec.describe ValidateHTML::RackMiddleware do
 
     context 'with included string ignored path' do
       before do
-        stub_config(ignored_paths: ["/sessions"])
+        stub_config(ignored_paths: ['/sessions'])
       end
 
       it 'checks the response' do
@@ -108,7 +114,7 @@ RSpec.describe ValidateHTML::RackMiddleware do
     end
 
     context 'with valid html' do
-      let(:body) { "<strong><em>Emphasis</em></strong>" }
+      let(:body) { '<strong><em>Emphasis</em></strong>' }
 
       it "doesn't raise an error" do
         expect(middleware.call(env)).to eq [200, headers, body]

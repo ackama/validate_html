@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
 module ValidateHTML
+  # Automatic integration of ValidateHTML with Rails
+  #   require 'validate_html/railtie'
+  # or just ensure rails is required before validate_html
   class Railtie < ::Rails::Railtie
-    initializer "html_validator.configure_rails_initialization" do |app|
+    initializer 'html_validator.configure_rails_initialization' do |app|
       next unless ::ValidateHTML.configuration.environments.any? { |e| e.to_s == Rails.env }
 
       app.configure do
@@ -29,7 +34,7 @@ module ValidateHTML
       end
 
       ::ActiveSupport::Notifications.subscribe(
-        "transmit.action_cable",
+        'transmit.action_cable',
         ::ValidateHTML::ActiveSupportNotificationHandler
       )
     end
