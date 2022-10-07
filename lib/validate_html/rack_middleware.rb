@@ -13,7 +13,7 @@ module ValidateHTML
     # @see ValidateHTML.validate_html
     def call(env)
       status, headers, response = @app.call(env)
-      path = ::Rack::Request.new(env).fullpath
+      path = ::Rack::Request.new(env).path
       return [status, headers, response] unless checkable_path?(path)
 
       body = find_body(response)
@@ -38,9 +38,11 @@ module ValidateHTML
 
     def find_body(response)
       if response.respond_to?(:body)
-        response.body
-      elsif response.is_a?(Array) # request specs
-        response.first || ""
+        find_body(response.body)
+      elsif response.respond_to?(:each) # request specs
+        response.each.to_a.join
+      elsif response.respond_to?(:to_str)
+        response.to_str
       else
         ""
       end

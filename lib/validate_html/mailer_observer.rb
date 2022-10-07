@@ -13,10 +13,10 @@ module ValidateHTML
         html_part = email.html_part
         return email unless html_part
 
-        HTMLValidator.validate_html(
+        ValidateHTML.validate_html(
           html_part.body.raw_source,
           content_type: html_part.content_type,
-          name: message.subject
+          name: "email #{email.subject}"
         )
 
         email

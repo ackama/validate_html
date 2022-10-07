@@ -4,6 +4,7 @@ require_relative "validate_html/version"
 require_relative "validate_html/configuration"
 require_relative "validate_html/rack_middleware"
 require_relative "validate_html/mailer_observer"
+require_relative "validate_html/active_support_notification_handler"
 require_relative "validate_html/railtie" if defined?(::Rails::Railtie)
 require "nokogiri"
 require "digest"
@@ -91,11 +92,11 @@ module ValidateHTML
     # @raise [NotRememberingMessagesError] if {Configuration#remember_messages} is false
     def raise_remembered_messages
       fail NotRememberingMessagesError unless configuration.remember_messages?
-      return if remembered_messages.blank?
+      return if remembered_messages.empty?
 
       messages = remembered_messages
       forget_messages
-      fail InvalidHTMLError, messages.uniq.join("\n---\n")
+      fail InvalidHTMLError, messages.uniq.join("---\n")
     end
 
     # @!attribute [r] remembered_messages
