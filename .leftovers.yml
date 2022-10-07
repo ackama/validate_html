@@ -1,0 +1,36 @@
+exclude_paths:
+  - vendor
+keep:
+  # public api
+
+  # ValidateHTML
+  - validate_html
+  - raise_remembered_messages
+  - remembered_messages
+  - forget_messages
+  - configuration
+  - configure
+
+  # ValidateHTML::Configuration
+  - raise_on_invalid_html
+  - raise_on_invalid_html?
+  - raise_on_invalid_html=
+  - remember_messages
+  - remember_messages?
+  - remember_messages=
+  - ignored_errors
+  - ignored_errors=
+  - ignored_paths
+  - ignored_paths=
+  - environments
+  - environments=
+  - snapshot_path
+  - snapshot_path=
+
+  # ValidateHTML::MailerObserver
+  - previewing_email
+  - delivering_email
+  - delivered_email
+
+  # ValidateHTML::RackMiddleware
+  - call

@@ -39,4 +39,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "actionmailer"
   spec.add_development_dependency "mail"
   spec.add_development_dependency "spellr"
+  spec.add_development_dependency "leftovers"
 end
