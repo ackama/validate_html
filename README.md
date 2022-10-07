@@ -27,6 +27,8 @@ To validate a block of HTML outside of these contexts (including outside of rail
 ValidateHTML.validate_html(my_html_here, **options)
 ```
 
+Full documentation: https://www.rubydoc.info/gems/validate_html
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
