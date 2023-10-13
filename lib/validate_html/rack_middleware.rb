@@ -5,6 +5,8 @@ module ValidateHTML
   #
   # This can be used with any rack app
   class RackMiddleware
+    ANNOTATE_RENDERED_VIEW_WITH_FILENAMES_PREFIX_COMMENT_REGEX = /\A<!-- BEGIN .+?-->/.freeze
+
     def initialize(app)
       @app = app
     end
@@ -25,12 +27,28 @@ module ValidateHTML
 
       return [status, headers, response] unless html_content_type?(headers)
 
-      ValidateHTML.validate_html(body, content_type: headers['Content-Type'], name: path)
+      body_for_validation = remove_annotate_rendered_view_with_filenames_prefix_comment(body)
+      ValidateHTML.validate_html(body_for_validation, content_type: headers['Content-Type'], name: path)
 
       [status, headers, response]
     end
 
     private
+
+    # If:
+    #
+    #    config.action_view.annotate_rendered_view_with_filenames = true
+    #
+    # is set in Rails then each rendered view and partial will have a comment
+    # at the top like:
+    #
+    #    <!-- BEGIN app/views/thing/index.html.erb -->
+    #
+    # When this comment is present before the doctype, it causes the HTML to be
+    # invalid in a way that is not useful so we remove it.
+    def remove_annotate_rendered_view_with_filenames_prefix_comment(body)
+      body.sub(ANNOTATE_RENDERED_VIEW_WITH_FILENAMES_PREFIX_COMMENT_REGEX, '')
+    end
 
     def checkable_path?(path)
       !ValidateHTML.configuration.ignored_paths_re.match?(path)

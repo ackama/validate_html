@@ -37,6 +37,23 @@ RSpec.describe ValidateHTML::RackMiddleware do
       end
     end
 
+    context 'with config.action_view.annotate_rendered_view_with_filenames=true HTML' do
+      let(:body_with_leading_comment_removed) { '<!DOCTYPE html><html><body><p>hi</p></body></html>' }
+      let(:body) { "<!-- BEGIN app/views/layouts/site.html.erb -->#{body_with_leading_comment_removed}" }
+
+      it 'does not raise an error' do
+        expect(middleware.call(env)).to eq [200, headers, body]
+      end
+
+      it 'calls ValidateHTML.validate_html with the leading comment removed' do
+        allow(ValidateHTML).to receive(:validate_html)
+
+        middleware.call(env)
+
+        expect(ValidateHTML).to have_received(:validate_html).with(body_with_leading_comment_removed, anything)
+      end
+    end
+
     context 'with invalid html in an array for some reason' do
       let(:body) { ['<strong><em>Emphasis</strong></em>'] }
 
