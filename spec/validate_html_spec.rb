@@ -8,7 +8,7 @@ RSpec.describe ValidateHTML do
   let(:valid_html) { '<strong><em>Very Emphasized</em></strong>' }
 
   it 'has a version number' do
-    expect(ValidateHTML::VERSION).to eq '0.1.0'
+    expect(ValidateHTML::VERSION).to eq '0.2.0'
   end
 
   describe '.validate_html' do
