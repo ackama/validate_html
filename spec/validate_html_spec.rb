@@ -68,7 +68,7 @@ RSpec.describe ValidateHTML do
     end
 
     it 'ignores errors that have been ignored with regexp' do
-      stub_config(ignored_errors: [/That tag isn't allowed here/])
+      stub_config(ignored_errors: [/End tag '.*' isn't allowed here/])
 
       expect { described_class.validate_html(invalid_html, name: 'My Emphasized Fragment') }
         .not_to raise_error
