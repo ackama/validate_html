@@ -41,6 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'activesupport'
   spec.add_development_dependency 'leftovers'
   spec.add_development_dependency 'mail'
+  spec.add_development_dependency 'net-smtp'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'railties'
   spec.add_development_dependency 'rubocop'
