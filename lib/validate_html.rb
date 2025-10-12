@@ -25,10 +25,10 @@ module ValidateHTML
   #   #   Parsed using Nokogiri::HTML5::DocumentFragment
   #   #   document saved at: [Configuration#snapshot_path]/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
   #   #
-  #   #   1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
+  #   #   1:28: ERROR: End tag 'strong' isn't allowed here. Currently open tags: html, strong, em.
   #   #   <strong><em>Very Emphasized</strong></em>
   #   #                              ^
-  #   #   1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
+  #   #   1:37: ERROR: End tag 'em' isn't allowed here. Currently open tags: html.
   #   #   <strong><em>Very Emphasized</strong></em>
   #   #                                       ^
   # @see ValidateHTML.validate_html
@@ -63,10 +63,10 @@ module ValidateHTML
     #   #   Parsed using Nokogiri::HTML5::DocumentFragment
     #   #   Document saved at: [Configuration#snapshot_path]/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
     #   #
-    #   #   1:28: ERROR: That tag isn't allowed here  Currently open tags: html, strong, em.
+    #   #   1:28: ERROR: End tag 'strong' isn't allowed here. Currently open tags: html, strong, em.
     #   #   <strong><em>Very Emphasized</strong></em>
     #   #                              ^
-    #   #   1:37: ERROR: That tag isn't allowed here  Currently open tags: html.
+    #   #   1:37: ERROR: End tag 'em' isn't allowed here. Currently open tags: html.
     #   #   <strong><em>Very Emphasized</strong></em>
     #   #                                       ^
     #
