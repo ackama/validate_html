@@ -19,9 +19,8 @@ RSpec.describe ValidateHTML::MailerObserver do
       stub_config(snapshot_path: snapshot_path)
 
       expect { described_class.perform(html_email) }
-        .to raise_error(
-          ValidateHTML::InvalidHTMLError,
-          <<~MESSAGE
+        .to raise_error(ValidateHTML::InvalidHTMLError) do |err|
+          expect(err.message).to eq <<~MESSAGE
             Invalid html from email The Subject
             Parsed using Nokogiri::HTML5::DocumentFragment
             document saved at: #{File.dirname(__dir__)}/tmp/test_snapshots/1a8ce99806ddeccc3a5f2904ba07c7fa5ae4659d.html
@@ -33,7 +32,7 @@ RSpec.describe ValidateHTML::MailerObserver do
             <strong><em>Very Emphasized</strong></em>
                                                 ^
           MESSAGE
-        )
+        end
     end
 
     context 'with valid html' do
